@@ -23,6 +23,8 @@ const Page = () => {
     const canvasRef = useRef<HTMLDivElement>(null);
     const [mouseStart, setMouseStart] = useState<null | Position>(null);
     const [isItemDragging, setIsItemDragging] = useState(false);
+
+    console.log(canvasPosition);
     const canvasPositionStyle = {
         top: `${canvasPosition.y}px`,
         left: `${canvasPosition.x}px`,
@@ -37,9 +39,7 @@ const Page = () => {
         setMouseStart({ x: e.clientX, y: e.clientY });
     };
     const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        resizeParent();
         if (!mouseStart || isItemDragging) return;
-        console.log("move");
         const deltaX = e.clientX - mouseStart.x;
         const deltaY = e.clientY - mouseStart.y;
         setCanvasTranslate((pre) => ({
@@ -63,46 +63,30 @@ const Page = () => {
     };
 
     const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        const { deltaY, clientX, clientY } = e;
-        // calcTransformOrigin({ clientX, clientY });
-
-        const scaleCalc = 1 - deltaY * 0.001;
-        setCanvasScale((pre) => pre * scaleCalc);
-    };
-
-    const calcTransformOrigin = ({ clientX, clientY }: any) => {
+        e.preventDefault();
         if (!canvasRef.current) return;
         const { x: canvasX, y: canvasY } =
             canvasRef.current.getBoundingClientRect();
-        setCanvasTransformOrigin({
-            x: (clientX - canvasX) / canvasScale,
-            y: (clientY - canvasY) / canvasScale,
+
+        const { deltaY, clientX, clientY } = e;
+        const scaleSize = deltaY < 0 ? 0.1 : -0.1;
+        const tx = (clientX - canvasX) * scaleSize;
+        const ty = (clientY - canvasY) * scaleSize;
+        setCanvasScale((pre) => pre * (1 + scaleSize));
+        setCanvasPosition((pre) => {
+            return {
+                x: pre.x - tx,
+                y: pre.y - ty,
+            };
         });
     };
+
     const canvasScaleStyle = {
         transform: `scale(${canvasScale})`,
     };
     const canvasTransformOriginStyle = {
         transformOrigin: `${canvasTransformOrigin.x}px ${canvasTransformOrigin.y}px`,
     };
-
-    function resizeParent() {
-        if (!canvasRef.current) return;
-        const children = canvasRef.current.childNodes;
-        console.log(children);
-        let maxWidth = 0;
-        let maxHeight = 0;
-
-        children.forEach((child) => {
-            console.log(child);
-            // const rect = child.;
-            // maxWidth = Math.max(maxWidth, rect.right);
-            // maxHeight = Math.max(maxHeight, rect.bottom);
-        });
-
-        // parent.style.width = `${maxWidth}px`;
-        // parent.style.height = `${maxHeight}px`;
-    }
 
     return (
         <DndContext>
@@ -121,7 +105,7 @@ const Page = () => {
                         ...canvasScaleStyle,
                         ...canvasTransformOriginStyle,
                     }}
-                    className="absolute  w-fit h-fit border-slate-900 origin-top-left border-2 inline-block"
+                    className="absolute "
                 >
                     <Draggable
                         draggableId="table1"
