@@ -1,39 +1,29 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { useDroppable } from "@dnd-kit/core";
 import { DndContext } from "@dnd-kit/core";
-import TableModal from "./component/TableModal";
-import Draggable from "@/lib/dnd/Draggable";
-import Droppable from "@/lib/dnd/Droppable";
-import { transform } from "next/dist/build/swc";
 
 type Position = {
     x: number;
     y: number;
 };
 
-const Page = () => {
+interface Props {
+    canvasScale: number;
+    setCanvasScale: React.Dispatch<React.SetStateAction<number>>;
+    children: React.ReactNode;
+    isItemDragging: boolean;
+}
+const Canvas = ({
+    canvasScale,
+    setCanvasScale,
+    children,
+    isItemDragging,
+}: Props) => {
+    const canvasRef = useRef<HTMLDivElement>(null);
     const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0 });
     const [canvasTranslate, setCanvasTranslate] = useState({ x: 0, y: 0 });
-    const [canvasScale, setCanvasScale] = useState(1);
-    const [canvasTransformOrigin, setCanvasTransformOrigin] = useState({
-        x: 0,
-        y: 0,
-    });
-    const canvasRef = useRef<HTMLDivElement>(null);
     const [mouseStart, setMouseStart] = useState<null | Position>(null);
-    const [isItemDragging, setIsItemDragging] = useState(false);
 
-    console.log(canvasPosition);
-    const canvasPositionStyle = {
-        top: `${canvasPosition.y}px`,
-        left: `${canvasPosition.x}px`,
-    };
-    const canvasTranslateStyle = canvasTranslate
-        ? {
-              translate: `${canvasTranslate.x}px ${canvasTranslate.y}px`,
-          }
-        : {};
     const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         if (isItemDragging) return;
         setMouseStart({ x: e.clientX, y: e.clientY });
@@ -49,8 +39,6 @@ const Page = () => {
     };
 
     const onMouseUp = (e: React.MouseEvent<HTMLDivElement>) => {
-        if (isItemDragging) return;
-
         setMouseStart(null);
         setCanvasPosition((pre) => ({
             x: pre.x + canvasTranslate.x,
@@ -63,7 +51,6 @@ const Page = () => {
     };
 
     const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-        e.preventDefault();
         if (!canvasRef.current) return;
         const { x: canvasX, y: canvasY } =
             canvasRef.current.getBoundingClientRect();
@@ -84,9 +71,15 @@ const Page = () => {
     const canvasScaleStyle = {
         transform: `scale(${canvasScale})`,
     };
-    const canvasTransformOriginStyle = {
-        transformOrigin: `${canvasTransformOrigin.x}px ${canvasTransformOrigin.y}px`,
+    const canvasPositionStyle = {
+        top: `${canvasPosition.y}px`,
+        left: `${canvasPosition.x}px`,
     };
+    const canvasTranslateStyle = canvasTranslate
+        ? {
+              translate: `${canvasTranslate.x}px ${canvasTranslate.y}px`,
+          }
+        : {};
 
     return (
         <DndContext>
@@ -103,28 +96,14 @@ const Page = () => {
                         ...canvasPositionStyle,
                         ...canvasTranslateStyle,
                         ...canvasScaleStyle,
-                        ...canvasTransformOriginStyle,
                     }}
                     className="absolute "
                 >
-                    <Draggable
-                        draggableId="table1"
-                        scale={canvasScale}
-                        setIsItemDragging={setIsItemDragging}
-                    >
-                        <TableModal />
-                    </Draggable>
-                    <Draggable
-                        draggableId="table2"
-                        scale={canvasScale}
-                        setIsItemDragging={setIsItemDragging}
-                    >
-                        <TableModal />
-                    </Draggable>
+                    {children}
                 </div>
             </div>
         </DndContext>
     );
 };
 
-export default Page;
+export default Canvas;
