@@ -1,6 +1,12 @@
 "use client";
 import React, { useState, useRef } from "react";
-import { DndContext } from "@dnd-kit/core";
+import {
+    DndContext,
+    useSensors,
+    useSensor,
+    PointerSensor,
+    MouseSensor,
+} from "@dnd-kit/core";
 
 type Position = {
     x: number;
@@ -12,14 +18,15 @@ interface Props {
     setCanvasScale: React.Dispatch<React.SetStateAction<number>>;
     children: React.ReactNode;
     isItemDragging: boolean;
+    canvasRef: React.RefObject<HTMLDivElement>;
 }
 const Canvas = ({
     canvasScale,
     setCanvasScale,
     children,
     isItemDragging,
+    canvasRef,
 }: Props) => {
-    const canvasRef = useRef<HTMLDivElement>(null);
     const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0 });
     const [canvasTranslate, setCanvasTranslate] = useState({ x: 0, y: 0 });
     const [mouseStart, setMouseStart] = useState<null | Position>(null);
@@ -81,8 +88,13 @@ const Canvas = ({
           }
         : {};
 
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: { delay: 200, tolerance: 100, distance: 8 },
+        })
+    );
     return (
-        <DndContext>
+        <DndContext sensors={sensors}>
             <div
                 onWheel={onWheel}
                 onMouseDown={onMouseDown}

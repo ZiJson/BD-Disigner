@@ -1,6 +1,5 @@
 import { createStore } from "zustand/vanilla";
 import { type TableModal } from "@/types/Table";
-import { Table } from "lucide-react";
 
 export type WorkspaceState = {
     tables: TableModal[];
