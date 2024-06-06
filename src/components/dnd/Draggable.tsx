@@ -17,7 +17,8 @@ function Draggable(props: Props) {
     const startPosition = () => {
         if (!props.canvasRef.current) return { x: 0, y: 0 };
         const { x, y } = props.canvasRef.current.getBoundingClientRect();
-        return { x: -x + 10, y: -y + 10 };
+        console.log(x, y);
+        return { x: (-x + 10) / props.scale, y: (-y + 10) / props.scale };
     };
     const [position, setPosition] = useState<Coordinates>(startPosition());
     const onDragEnd = (event: DragEndEvent) => {
@@ -61,7 +62,7 @@ function Draggable(props: Props) {
             {...attributes}
         >
             <div
-                className={`transition-all duration-150 ${
+                className={`transition-all duration-150 ease-in-out ${
                     isDragging
                         ? "scale-[1.06] shadow-xl cursor-grabbing"
                         : "scale-100"

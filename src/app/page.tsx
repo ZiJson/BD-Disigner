@@ -5,6 +5,7 @@ import Draggable from "@/components/dnd/Draggable";
 import Canvas from "@/components/Canvas";
 import { useWorkspaceStore } from "@/providers/workspace-store-provider";
 import { Button } from "@/components/ui/button";
+import ConnectLine from "@/components/ConnectLine";
 
 const Page = () => {
     const [canvasScale, setCanvasScale] = useState(1);
@@ -14,6 +15,7 @@ const Page = () => {
     const { tables, addTable, removeTable } = useWorkspaceStore(
         (state) => state
     );
+
     return (
         <div>
             <Canvas
@@ -22,6 +24,10 @@ const Page = () => {
                 isItemDragging={isItemDragging}
                 canvasRef={canvasRef}
             >
+                <ConnectLine
+                    start={{ x: 100, y: 100 }}
+                    end={{ x: 500, y: 500 }}
+                />
                 {tables.map((table) => (
                     <Draggable
                         key={table.id}
@@ -30,25 +36,12 @@ const Page = () => {
                         setIsItemDragging={setIsItemDragging}
                         canvasRef={canvasRef}
                     >
-                        <TableModal onRemove={() => removeTable(table.id)} />
+                        <TableModal
+                            onRemove={() => removeTable(table.id)}
+                            tableData={table}
+                        />
                     </Draggable>
                 ))}
-                {/* <>
-                <Draggable
-                draggableId="table1"
-                scale={canvasScale}
-                setIsItemDragging={setIsItemDragging}
-                >
-                <TableModal />
-                </Draggable>
-                <Draggable
-                draggableId="table2"
-                scale={canvasScale}
-                setIsItemDragging={setIsItemDragging}
-                >
-                <TableModal />
-                </Draggable>
-            </> */}
             </Canvas>
 
             <Button

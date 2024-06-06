@@ -109,7 +109,7 @@ const Canvas = ({
                         ...canvasTranslateStyle,
                         ...canvasScaleStyle,
                     }}
-                    className="absolute "
+                    className="fixed"
                 >
                     {children}
                 </div>

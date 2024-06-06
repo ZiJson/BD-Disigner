@@ -25,7 +25,18 @@ export const createWorkspaceStore = (
             set((state) => ({
                 tables: [
                     ...state.tables,
-                    { id: state.tables.length + 1, name: null, fields: [] },
+                    {
+                        id: state.tables.length + 1,
+                        name: `table ${state.tables.length + 1}`,
+                        fields: [
+                            {
+                                name: "id",
+                                type: { name: "INT" },
+                                nullable: false,
+                                unique: true,
+                            },
+                        ],
+                    },
                 ],
             })),
         removeTable: (id: number) =>
