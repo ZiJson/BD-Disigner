@@ -14,13 +14,18 @@ interface Props {
 }
 
 function Draggable(props: Props) {
-    const [position, setPosition] = useState<Coordinates | null>(null);
+    const startPosition = () => {
+        if (!props.canvasRef.current) return { x: 0, y: 0 };
+        const { x, y } = props.canvasRef.current.getBoundingClientRect();
+        return { x: -x + 10, y: -y + 10 };
+    };
+    const [position, setPosition] = useState<Coordinates>(startPosition());
     const onDragEnd = (event: DragEndEvent) => {
         if (event.active.id !== props.draggableId) return;
         const { x, y } = event.delta;
         setPosition((pre) => ({
-            x: pre?.x || 0 + x / props.scale,
-            y: pre?.y || 0 + y / props.scale,
+            x: pre.x + x / props.scale,
+            y: pre.y + y / props.scale,
         }));
         props.setIsItemDragging(false);
     };
@@ -45,14 +50,7 @@ function Draggable(props: Props) {
               left: `${position.x}px`,
           }
         : undefined;
-    const startPosition = () => {
-        if (!props.canvasRef.current) return;
-        const { x, y } = props.canvasRef.current.getBoundingClientRect();
-        setPosition({ x: -x + 10, y: -y + 10 });
-    };
-    useEffect(() => {
-        startPosition();
-    }, []);
+
     return (
         <button
             onMouseMove={(e) => e.stopPropagation()}
