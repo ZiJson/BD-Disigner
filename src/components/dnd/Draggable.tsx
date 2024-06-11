@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import { useDraggable, useDndMonitor } from "@dnd-kit/core";
-import { type DragEndEvent } from "@dnd-kit/core";
-import { Scale } from "lucide-react";
-import { type Coordinates } from "@dnd-kit/core/dist/types";
+import React, { useEffect, useState } from 'react';
+import { useDraggable, useDndMonitor } from '@dnd-kit/core';
+import { type DragEndEvent } from '@dnd-kit/core';
+import { Scale } from 'lucide-react';
+import { type Coordinates } from '@dnd-kit/core/dist/types';
 interface Props {
     children: React.ReactNode;
     draggableId: string;
@@ -17,7 +17,6 @@ function Draggable(props: Props) {
     const startPosition = () => {
         if (!props.canvasRef.current) return { x: 0, y: 0 };
         const { x, y } = props.canvasRef.current.getBoundingClientRect();
-        console.log(x, y);
         return { x: (-x + 10) / props.scale, y: (-y + 10) / props.scale };
     };
     const [position, setPosition] = useState<Coordinates>(startPosition());
@@ -64,8 +63,8 @@ function Draggable(props: Props) {
             <div
                 className={`transition-all duration-150 ease-in-out ${
                     isDragging
-                        ? "scale-[1.06] shadow-xl cursor-grabbing"
-                        : "scale-100"
+                        ? 'scale-[1.06] shadow-xl cursor-grabbing'
+                        : 'scale-100'
                 }`}
             >
                 {props.children}
