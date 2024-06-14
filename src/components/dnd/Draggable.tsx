@@ -1,10 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { useDraggable, useDndMonitor } from '@dnd-kit/core';
-import { type DragEndEvent } from '@dnd-kit/core';
-import { Scale } from 'lucide-react';
-import { type Coordinates } from '@dnd-kit/core/dist/types';
+import React, { useEffect, useState } from "react";
+import { useDraggable, useDndMonitor } from "@dnd-kit/core";
+import { type DragEndEvent } from "@dnd-kit/core";
+import { Scale } from "lucide-react";
+import { useWorkspaceStore } from "@/providers/workspace-store-provider";
+
+import { type Coordinates } from "@dnd-kit/core/dist/types";
 interface Props {
     children: React.ReactNode;
     draggableId: string;
@@ -14,6 +16,7 @@ interface Props {
 }
 
 function Draggable(props: Props) {
+    const { updateNode } = useWorkspaceStore((state) => state);
     const startPosition = () => {
         if (!props.canvasRef.current) return { x: 0, y: 0 };
         const { x, y } = props.canvasRef.current.getBoundingClientRect();
@@ -32,7 +35,17 @@ function Draggable(props: Props) {
     const onDragStart = (event: DragEndEvent) => {
         props.setIsItemDragging(true);
     };
-    useDndMonitor({ onDragEnd, onDragStart });
+    const onDragMove = (event: DragEndEvent) => {
+        if (event.active.id !== props.draggableId) return;
+        console.log(+props.draggableId);
+        const { x, y } = event.delta;
+
+        updateNode(+props.draggableId, {
+            x: x / props.scale,
+            y: y / props.scale,
+        });
+    };
+    useDndMonitor({ onDragEnd, onDragStart, onDragMove });
     const { attributes, listeners, setNodeRef, transform, isDragging } =
         useDraggable({
             id: props.draggableId,
@@ -63,8 +76,8 @@ function Draggable(props: Props) {
             <div
                 className={`transition-all duration-150 ease-in-out ${
                     isDragging
-                        ? 'scale-[1.06] shadow-xl cursor-grabbing'
-                        : 'scale-100'
+                        ? "scale-[1.06] shadow-xl cursor-grabbing"
+                        : "scale-100"
                 }`}
             >
                 {props.children}

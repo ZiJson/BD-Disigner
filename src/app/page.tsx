@@ -1,12 +1,12 @@
-'use client';
-import React, { useEffect, useState, useRef } from 'react';
-import TableModal from '../components/TableModal';
-import Draggable from '@/components/dnd/Draggable';
-import Canvas from '@/components/Canvas';
-import { useWorkspaceStore } from '@/providers/workspace-store-provider';
-import { Button } from '@/components/ui/button';
-import ConnectLine from '@/components/ConnectLine';
-import { Coordinates } from '@dnd-kit/core/dist/types';
+"use client";
+import React, { useEffect, useState, useRef } from "react";
+import TableModal from "../components/TableModal";
+import Draggable from "@/components/dnd/Draggable";
+import Canvas from "@/components/Canvas";
+import { useWorkspaceStore } from "@/providers/workspace-store-provider";
+import { Button } from "@/components/ui/button";
+import ConnectLine from "@/components/ConnectLine";
+import { Coordinates } from "@dnd-kit/core/dist/types";
 
 const Page = () => {
     const [canvasScale, setCanvasScale] = useState(1);
@@ -14,12 +14,11 @@ const Page = () => {
     const [mouseCoor, setMouseCoor] = useState<Coordinates>({ x: 0, y: 0 });
     const canvasRef = useRef<HTMLDivElement>(null);
 
-    const { tables, addTable, removeTable } = useWorkspaceStore(
+    const { tables, addTable, removeTable, nodes, lines } = useWorkspaceStore(
         (state) => state
     );
 
     const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        console.log(e);
         setMouseCoor({ x: e.clientX, y: e.clientY });
     };
 
@@ -45,18 +44,38 @@ const Page = () => {
                         />
                     </Draggable>
                 ))}
+                <div className="fixed w-screen h-screen top-0 left-0 -z-10">
+                    {lines.map((line) => {
+                        return (
+                            <ConnectLine
+                                key={line.id}
+                                start={
+                                    nodes.find(
+                                        (node) => node.id === line.startNodeId
+                                    )?.coordinates
+                                }
+                                end={
+                                    nodes.find(
+                                        (node) => node.id === line.endNodeId
+                                    )?.coordinates
+                                }
+                            />
+                        );
+                    })}
+                    {/* <ConnectLine
+                        start={{ x: 500, y: 300 }}
+                        end={{ x: 800, y: 500 }}
+                    /> */}
+                    <i
+                        className="w-2 h-2 rounded-full absolute bg-slate-600"
+                        style={{ top: 500 - 4, left: 800 - 4 }}
+                    ></i>
+                    <i
+                        className="w-2 h-2 rounded-full absolute bg-slate-600"
+                        style={{ top: 300 - 4, left: 500 - 4 }}
+                    ></i>
+                </div>
             </Canvas>
-            <div className="fixed w-screen h-screen top-0 left-0 ">
-                <ConnectLine start={{ x: 500, y: 300 }} end={mouseCoor} />
-                <i
-                    className="w-2 h-2 rounded-full absolute bg-slate-600"
-                    style={{ top: mouseCoor.y - 4, left: mouseCoor.x - 4 }}
-                ></i>
-                <i
-                    className="w-2 h-2 rounded-full absolute bg-slate-600"
-                    style={{ top: 300 - 4, left: 500 - 4 }}
-                ></i>
-            </div>
             <Button
                 onClick={addTable}
                 className="absolute top-5 right-[50%] translate-x-[50%]"
