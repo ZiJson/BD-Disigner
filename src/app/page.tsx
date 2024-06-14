@@ -38,7 +38,7 @@ const Page = () => {
                         />
                     </Draggable>
                 ))}
-                <div className="fixed w-screen h-screen top-0 left-0 -z-10">
+                <div className="absolute -z-10 ">
                     {lines.map((line) => {
                         return (
                             <ConnectLine
@@ -56,18 +56,6 @@ const Page = () => {
                             />
                         );
                     })}
-                    {/* <ConnectLine
-                        start={{ x: 500, y: 300 }}
-                        end={{ x: 800, y: 500 }}
-                    /> */}
-                    <i
-                        className="w-2 h-2 rounded-full absolute bg-slate-600"
-                        style={{ top: 500 - 4, left: 800 - 4 }}
-                    ></i>
-                    <i
-                        className="w-2 h-2 rounded-full absolute bg-slate-600"
-                        style={{ top: 300 - 4, left: 500 - 4 }}
-                    ></i>
                 </div>
             </Canvas>
             <Button

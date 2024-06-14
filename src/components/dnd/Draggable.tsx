@@ -15,7 +15,7 @@ interface Props {
 }
 
 function Draggable(props: Props) {
-    const { updateNode } = useWorkspaceStore((state) => state);
+    const { updateNode, nodes } = useWorkspaceStore((state) => state);
     const startPosition = () => {
         if (!props.canvasRef.current) return { x: 0, y: 0 };
         const { x, y } = props.canvasRef.current.getBoundingClientRect();
@@ -36,12 +36,10 @@ function Draggable(props: Props) {
     };
     const onDragMove = (event: DragEndEvent) => {
         if (event.active.id !== props.draggableId) return;
-        console.log(+props.draggableId);
         const { x, y } = event.delta;
-
         updateNode(+props.draggableId, {
-            x: x / props.scale,
-            y: y / props.scale,
+            x: position.x + x / props.scale,
+            y: position.y + y / props.scale,
         });
     };
     useDndMonitor({ onDragEnd, onDragStart, onDragMove });

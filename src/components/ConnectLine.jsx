@@ -46,6 +46,9 @@ const ConnectLine = ({ start, end, strokeColor = "rgb(100 116 139)" }) => {
             className="absolute"
             style={positionStyle}
         >
+            {/* <text x={width / 2} y={height / 2}>
+                {`(${start.x}, ${start.y}) to (${end.x}, ${end.y})`}
+            </text> */}
             {path.toComponent({
                 fill: "none",
                 stroke: strokeColor,

@@ -103,7 +103,7 @@ const Canvas = ({ children, isItemDragging, canvasRef }: Props) => {
                         ...canvasTranslateStyle,
                         ...canvasScaleStyle,
                     }}
-                    className="fixed"
+                    className="fixed w-2 h-2 rounded-full bg-slate-600"
                 >
                     {children}
                 </div>
