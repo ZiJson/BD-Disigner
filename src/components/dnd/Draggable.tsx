@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { useDraggable, useDndMonitor } from "@dnd-kit/core";
 import { type DragEndEvent } from "@dnd-kit/core";
-import { Scale } from "lucide-react";
 import { useWorkspaceStore } from "@/providers/workspace-store-provider";
 
 import { type Coordinates } from "@dnd-kit/core/dist/types";

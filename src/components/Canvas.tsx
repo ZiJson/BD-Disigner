@@ -5,8 +5,8 @@ import {
     useSensors,
     useSensor,
     PointerSensor,
-    MouseSensor,
 } from "@dnd-kit/core";
+import { useWorkspaceStore } from "@/providers/workspace-store-provider";
 
 type Position = {
     x: number;
@@ -14,22 +14,16 @@ type Position = {
 };
 
 interface Props {
-    canvasScale: number;
-    setCanvasScale: React.Dispatch<React.SetStateAction<number>>;
     children: React.ReactNode;
     isItemDragging: boolean;
     canvasRef: React.RefObject<HTMLDivElement>;
 }
-const Canvas = ({
-    canvasScale,
-    setCanvasScale,
-    children,
-    isItemDragging,
-    canvasRef,
-}: Props) => {
+const Canvas = ({ children, isItemDragging, canvasRef }: Props) => {
     const [canvasPosition, setCanvasPosition] = useState({ x: 0, y: 0 });
     const [canvasTranslate, setCanvasTranslate] = useState({ x: 0, y: 0 });
     const [mouseStart, setMouseStart] = useState<null | Position>(null);
+
+    const { scaling, canvas } = useWorkspaceStore((state) => state);
 
     const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
         if (isItemDragging) return;
@@ -66,7 +60,7 @@ const Canvas = ({
         const scaleSize = deltaY < 0 ? 0.1 : -0.1;
         const tx = (clientX - canvasX) * scaleSize;
         const ty = (clientY - canvasY) * scaleSize;
-        setCanvasScale((pre) => pre * (1 + scaleSize));
+        scaling(canvas.scale * (1 + scaleSize));
         setCanvasPosition((pre) => {
             return {
                 x: pre.x - tx,
@@ -76,7 +70,7 @@ const Canvas = ({
     };
 
     const canvasScaleStyle = {
-        transform: `scale(${canvasScale})`,
+        transform: `scale(${canvas.scale})`,
     };
     const canvasPositionStyle = {
         top: `${canvasPosition.y}px`,

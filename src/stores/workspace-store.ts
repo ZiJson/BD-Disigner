@@ -2,14 +2,17 @@ import { createRef } from "react";
 import { createStore } from "zustand/vanilla";
 import { type TableModal } from "@/types/Table";
 import { type Connection, type FieldNode } from "@/types/Connection";
+import { type CanvasState } from "@/types/Canvas";
 
 export type WorkspaceState = {
+    canvas: CanvasState;
     tables: TableModal[];
     lines: Connection[];
     nodes: FieldNode[];
 };
 
 export type WorkspaceActions = {
+    scaling: (scale: number) => void;
     addTable: () => void;
     removeTable: (id: number) => void;
     updateNode: (id: number, coordinates: { x: number; y: number }) => void;
@@ -18,6 +21,9 @@ export type WorkspaceActions = {
 export type WorkspaceStore = WorkspaceState & WorkspaceActions;
 
 export const defaultInitState: WorkspaceState = {
+    canvas: {
+        scale: 1,
+    },
     tables: [
         {
             id: 1,
@@ -66,6 +72,8 @@ export const createWorkspaceStore = (
 ) => {
     return createStore<WorkspaceStore>()((set) => ({
         ...initState,
+        scaling: (scale: number) =>
+            set((state) => ({ ...state, canvas: { scale } })),
         addTable: () =>
             set((state) => ({
                 tables: [

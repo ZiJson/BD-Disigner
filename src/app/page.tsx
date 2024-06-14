@@ -9,27 +9,21 @@ import ConnectLine from "@/components/ConnectLine";
 import { Coordinates } from "@dnd-kit/core/dist/types";
 
 const Page = () => {
-    const [canvasScale, setCanvasScale] = useState(1);
     const [isItemDragging, setIsItemDragging] = useState(false);
-    const [mouseCoor, setMouseCoor] = useState<Coordinates>({ x: 0, y: 0 });
     const canvasRef = useRef<HTMLDivElement>(null);
 
-    const { tables, addTable, removeTable, nodes, lines } = useWorkspaceStore(
-        (state) => state
-    );
-
-    const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-        setMouseCoor({ x: e.clientX, y: e.clientY });
-    };
+    const {
+        tables,
+        addTable,
+        removeTable,
+        nodes,
+        lines,
+        canvas: { scale: canvasScale },
+    } = useWorkspaceStore((state) => state);
 
     return (
-        <div onMouseMove={onMouseMove}>
-            <Canvas
-                canvasScale={canvasScale}
-                setCanvasScale={setCanvasScale}
-                isItemDragging={isItemDragging}
-                canvasRef={canvasRef}
-            >
+        <div>
+            <Canvas isItemDragging={isItemDragging} canvasRef={canvasRef}>
                 {tables.map((table) => (
                     <Draggable
                         key={table.id}
