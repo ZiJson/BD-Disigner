@@ -38,8 +38,8 @@ function Draggable(props: Props) {
         if (event.active.id !== props.draggableId) return;
         const { x, y } = event.delta;
         updateNode(+props.draggableId, {
-            x: position.x + x / props.scale,
-            y: position.y + y / props.scale,
+            x: position.x + x / props.scale + 144,
+            y: position.y + y / props.scale + 53,
         });
     };
     useDndMonitor({ onDragEnd, onDragStart, onDragMove });

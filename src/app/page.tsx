@@ -9,63 +9,67 @@ import ConnectLine from "@/components/ConnectLine";
 import { Coordinates } from "@dnd-kit/core/dist/types";
 
 const Page = () => {
-    const [isItemDragging, setIsItemDragging] = useState(false);
-    const canvasRef = useRef<HTMLDivElement>(null);
+  const [isItemDragging, setIsItemDragging] = useState(false);
+  const canvasRef = useRef<HTMLDivElement>(null);
 
-    const {
-        tables,
-        addTable,
-        removeTable,
-        nodes,
-        lines,
-        canvas: { scale: canvasScale },
-    } = useWorkspaceStore((state) => state);
+  const {
+    tables,
+    addTable,
+    removeTable,
+    nodes,
+    lines,
+    canvas: { scale: canvasScale },
+  } = useWorkspaceStore((state) => state);
 
-    return (
-        <div>
-            <Canvas isItemDragging={isItemDragging} canvasRef={canvasRef}>
-                {tables.map((table) => (
-                    <Draggable
-                        key={table.id}
-                        draggableId={table.id.toString()}
-                        scale={canvasScale}
-                        setIsItemDragging={setIsItemDragging}
-                        canvasRef={canvasRef}
-                    >
-                        <TableModal
-                            onRemove={() => removeTable(table.id)}
-                            tableData={table}
-                        />
-                    </Draggable>
-                ))}
-                <div className="absolute -z-10 ">
-                    {lines.map((line) => {
-                        return (
-                            <ConnectLine
-                                key={line.id}
-                                start={
-                                    nodes.find(
-                                        (node) => node.id === line.startNodeId
-                                    )?.coordinates
-                                }
-                                end={
-                                    nodes.find(
-                                        (node) => node.id === line.endNodeId
-                                    )?.coordinates
-                                }
-                            />
-                        );
-                    })}
-                </div>
-            </Canvas>
-            <Button
-                onClick={addTable}
-                className="absolute top-5 right-[50%] translate-x-[50%]"
-            >
-                New Table
-            </Button>
+  return (
+    <div>
+      <Canvas isItemDragging={isItemDragging} canvasRef={canvasRef}>
+        {tables.map((table) => (
+          <Draggable
+            key={table.id}
+            draggableId={table.id.toString()}
+            scale={canvasScale}
+            setIsItemDragging={setIsItemDragging}
+            canvasRef={canvasRef}
+          >
+            <TableModal
+              onRemove={() => removeTable(table.id)}
+              tableData={table}
+            />
+          </Draggable>
+        ))}
+        <div className="absolute -z-10 ">
+          {lines.map((line) => {
+            let startPoint = {
+              ...nodes.find((node) => node.id === line.startNodeId)
+                ?.coordinates,
+            };
+            let endPoint = {
+              ...nodes.find((node) => node.id === line.endNodeId)?.coordinates,
+            };
+            console.log(startPoint, endPoint);
+            if (!startPoint.x || !endPoint.x) {
+              return null;
+            }
+            if (startPoint.x > endPoint.x) {
+              startPoint.x -= 140;
+            } else {
+              endPoint.x -= 140;
+            }
+            return (
+              <ConnectLine key={line.id} start={startPoint} end={endPoint} />
+            );
+          })}
         </div>
-    );
+      </Canvas>
+      <Button
+        onClick={addTable}
+        className="absolute top-5 right-[50%] translate-x-[50%]"
+      >
+        New Table
+      </Button>
+    </div>
+  );
 };
 
 export default Page;
